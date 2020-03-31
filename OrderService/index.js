@@ -1,16 +1,16 @@
 const express = require('express');
 const application = express();
 const port = 8080;
-const datapath = './userservicedata.json';
+const datapath = './orderservicedata.json';
 
 const fs = require('fs');
 
-application.get('/user/:id' , (req,res) =>
+application.get('/orders/:id' , (req,res) =>
 {
     fs.readFile(datapath ,'utf8' ,(err, data) => {
         if(err)
         throw err;
-        res.send(JSON.stringify(JSON.parse(data).data))
+        res.send(JSON.stringify(JSON.parse(data)))
     })
 }
 )
