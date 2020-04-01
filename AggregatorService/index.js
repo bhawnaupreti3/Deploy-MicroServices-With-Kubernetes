@@ -1,31 +1,14 @@
 const express = require('express')
 const app = express()
 const port = 8081
-const request = require('request');
-const sourceuser = "http://localhost:8080";
-const sourceorder = "http://localhost:8082";
+const request = require('request-promise');
+const sourceuser = process.env.USER_URL||"http://localhost:8080";
+const sourceorder = process.env.ORDER_URL||"http://localhost:8082";
 
-app.get('/orderdetails/:id', (req, res) => {
-	request(sourceuser+'/user/'+req.params.id, { json: true }, (err, resp, body) => {
-	  if (err || resp.statusCode!=200) {
-	  	  res.send("Error while getting data from "+err) 
-	  } else{
-		  res.send({
-		  	"UserDetails":body	  	
-		  });
-	  }
-	  
-	}),
-	request(sourceorder+'/orders/'+req.params.id, { json: true }, (err, resp, body) => {
-		if (err || resp.statusCode!=200) {
-			  res.send("Error while getting data from "+err) 
-		} else{
-			res.send({
-				"OrderDetails":body	  	
-			});
-		}
-		
-	  });  
+app.get('/orderdetails/:id', async (req, res) => {
+	let user  = await request(sourceuser+'/user/'+req.params.id, { json: true });
+	let orders  = await request(sourceorder+'/orders/'+req.params.id, { json: true });
+	res.json({userDetails:user,orders});
 
 })
 
