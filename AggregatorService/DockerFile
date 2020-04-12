@@ -1,8 +1,10 @@
 FROM node:8-alpine
 
-COPY . .
+COPY package*.json ./
 
+WORKDIR /
 RUN npm install
+COPY . .
 
 EXPOSE 8081
 ENTRYPOINT [ "node", "index.js" ]

@@ -1,0 +1,60 @@
+version: '3.4'
+
+services:
+
+  AggregatorService:
+    image: bhawna3/userorderdetails
+    build:
+      context: ./AggregatorService      
+      dockerfile: DockerFile
+    ports:
+      - "8081:8081"
+    depends_on:
+      - jagerservice      
+      - userservice
+      - orderservice
+    networks:
+       - backend
+
+  orderservice:
+    image: bhawna3/orders
+    build:
+      context: ./OrderService      
+      dockerfile: DockerFile
+    ports:
+      - "8082:8082"
+    depends_on:
+      - jagerservice
+    networks:
+      - backend
+
+  userservice:
+    image: bhawna3/user_data
+    build:
+      context: ./UserService      
+      dockerfile: DockerFile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - jagerservice
+    networks:
+      - backend
+
+  jagerservice:
+    image: jaegertracing/all-in-one:latest
+    environment:
+      - COLLECTOR_ZIPKIN_HTTP_PORT=9411
+    ports:
+      - "5775:5775/udp"
+      - "6831:6831/udp"
+      - "6832:6832/udp"
+      - "5778:5778"
+      - "16686:16686"
+      - "14268:14268"
+      - "9411:9411"
+    networks:
+      - backend    
+
+networks:
+  backend:
+    driver: bridge
